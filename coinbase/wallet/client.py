@@ -126,6 +126,28 @@ class Client(object):
         """
         if not str(response.status_code).startswith('2'):
             raise build_api_error(response)
+
+        # Sometimes coinbase returns a malformed JSON response
+        if response._content:
+            resp_content = response._content
+
+            # Decoding the response content if its bytes-like object
+            if isinstance(resp_content, bytes):
+                resp_content = resp_content.decode('utf-8')
+
+            # Checking for double-json response
+            if '}{' in resp_content:
+                print('WARNING: Coinbase API is sending back a malformed response (double-json).')
+                second_obj_pos = resp_content.index('}{') + 1
+                if second_obj_pos == len(resp_content) / 2:
+                    print('WARNING: Malformed response was fixed by truncating the response.')
+                    fixed_content = resp_content[:second_obj_pos]
+
+                    if isinstance(response._content, bytes):
+                        response._content = fixed_content.encode('utf-8')
+                    else:
+                        response._content = fixed_content
+
         return response
 
     def _get(self, *args, **kwargs):
@@ -155,7 +177,7 @@ class Client(object):
             if isinstance(resp_content, bytes):
                 resp._content = json.dumps(content).decode('utf-8')
             else:
-                resp._content = json.dumps(content)
+                resp._content = json.dumps(content).encode('utf-8')
             return resp
 
         prev_data.extend(content['data'])
