@@ -1,3 +1,19 @@
+This is the FORK of original package
+====================================
+
+
+If you want to use this repo (not original one) - make sure you install it via git (py -m pip install git+[repository-url])
+---------------------------------------------------------------------------------------------------------------------------
+In my fork, I only fixed the problem with JSON, when the coinbase api returns a double response (this is also mentioned in the commit description).
+---------------------------------------------------------------------------------------------------------------------------------------------------
+The description below is the description of the original library.
+-----------------------------------------------------------------
+
+|
+|
+|
+
+
 Coinbase
 ========
 
